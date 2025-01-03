@@ -30,15 +30,26 @@ def preprocess_image(image):
     - Normalize to [0, 1]
     - Add batch and channel dimensions
     """
-    # Convert to grayscale
-    image = ImageOps.grayscale(image)
+    # Convert RGBA to grayscale
     image = np.array(image)
+    if image.shape[-1] == 4:  # Check for RGBA
+        image = cv2.cvtColor(image, cv2.COLOR_RGBA2GRAY)
+    elif image.shape[-1] == 3:  # Check for RGB
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    # Threshold the image to binary
+    _, binary_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     # Find bounding box of the digit
-    coords = cv2.findNonZero(cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1])
+    coords = cv2.findNonZero(binary_image)
     if coords is not None:
         x, y, w, h = cv2.boundingRect(coords)
-        image = image[y - 10: y+h + 10, x - 10:x+w + 10]  # Crop to the bounding box
+        # Add padding around the digit
+        padding = 10
+        x_start = max(0, x - padding)
+        y_start = max(0, y - padding)
+        x_end = min(binary_image.shape[1], x + w + padding)
+        y_end = min(binary_image.shape[0], y + h + padding)
+        image = binary_image[y_start:y_end, x_start:x_end]
 
     # Resize to 28x28
     image = cv2.resize(image, (28, 28), interpolation=cv2.INTER_AREA)
@@ -51,6 +62,8 @@ def preprocess_image(image):
 
     return image
 
+
+
 # Streamlit App
 st.title("Real-Time Digit Recognizer")
 st.write("Draw a digit in the canvas below, and the prediction will update in real-time.")
@@ -59,8 +72,8 @@ st.write("Draw a digit in the canvas below, and the prediction will update in re
 canvas_result = st_canvas(
     fill_color="white",  # Background color
     stroke_width=10,  # Pen width
-    stroke_color="black",  # Pen color
-    background_color="white",  # Canvas background color
+    stroke_color="white",  # Pen color
+    background_color="black",  # Canvas background color
     width=280,
     height=280,
     drawing_mode="freedraw",
