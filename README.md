@@ -84,7 +84,7 @@ This project combines the power of deep learning with an intuitive user interfac
   - Three convolutional layers for feature extraction.
   - Dropout layers for regularization.
   - Dense layers for classification into 10 classes (digits 0-9).
-- Trained for 10 epochs on the MNIST dataset, achieving **XX% accuracy** on validation.
+- Trained for 10 epochs on the MNIST dataset, achieving **98% accuracy** on validation.
 
 ### **GAN**
 - A custom-designed generator and discriminator:
