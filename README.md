@@ -101,10 +101,8 @@ This project combines the power of deep learning with an intuitive user interfac
 
 ---
 
-## Planned Enhancements
-- Expand the classifier to recognize letters (A-Z) alongside digits.
-- Add customization options for GAN-generated digits.
-- Integrate additional datasets for broader use cases.
+# Sample Photos produce by GAN. 
+![alt text](https://github.com/Nimanoro/number-detector/blob/main/GAN-examples.png)
 
 ---
 
